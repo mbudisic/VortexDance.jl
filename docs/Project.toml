@@ -1,0 +1,3 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+VortexDynamics2D = "da4b8f6b-df42-4834-94c6-5a2bcb78e49d"
