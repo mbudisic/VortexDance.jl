@@ -1,5 +1,8 @@
 module VortexDynamics2D
 
+using LinearAlgebra
+using Infiltrator
+
 """
     streamfunction(x; p, Γ)
 
@@ -13,8 +16,18 @@ interlaced, i.e., `x,y,x,y,...` for
 """
 function streamfunction(x, p, Γ)
 
+    # make sure we have exactly the amount of vortices we need
     
-    2x + 3y
+    nvortices = length(Γ)
+    
+    @assert length(p) == 2 * nvortices
+
+    dmat = reshape(p, 2, nvortices) .- x
+    streampervortex = - Γ' .* log.( norm.(eachcol(dmat)) ) /2 /π
+
+    Ψ = maximum(streampervortex)
+
+    Ψ
     
 end
 
