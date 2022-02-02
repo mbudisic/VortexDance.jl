@@ -3,11 +3,14 @@ uuid = "da4b8f6b-df42-4834-94c6-5a2bcb78e49d"
 authors = ["Marko <mbudisic@clarkson.edu> and contributors"]
 version = "0.1.0"
 
-[extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+[deps]
+GeometricIntegratorsDiffEq = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
 
 [compat]
 julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test"]
