@@ -8,6 +8,7 @@ GeometricIntegratorsDiffEq = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
 Infiltrator = "5903a43b-9cc3-4c30-8d17-598619ec4e9b"
 
 [compat]
+GeometricIntegratorsDiffEq = "0.2"
 julia = "1.6"
 
 [extras]
