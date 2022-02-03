@@ -35,6 +35,28 @@ function streamfunction(x, p, Γ; aggregate=sum)
     
 end
 
+"""
+    streamfunction(n::Integer, p, Γ; aggregate=sum)
+
+    Evaluate the stream function at the location of the `n`th vortex.
+    The contribution of that vortex is omitted from the calculation performed
+    by the `streamfunction(x,...)` function.
+
+"""
+function streamfunction( n::Integer, p, Γ; aggregate=sum)
+
+    nvortices = length(Γ)
+    # make sure we have exactly the amount of vortices we need
+
+    @assert length(p) == 2 * nvortices
+
+    pmat = reshape(p,2,nvortices);
+    x = pmat[:, n];
+    streamfunction( x, pmat[:, 1:end .!= n], 
+    Γ[1:end .!= n] ; aggregate=aggregate)
+
+end
+
 export streamfunction
 
 
