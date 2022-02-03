@@ -32,8 +32,6 @@ function streamfunction(x, p, Γ; aggregate=sum)
             norm.(eachcol(distancetovortices))  # columnwise length
             )  
     Ψ = aggregate(streampervortex)
-    @show Ψ
-    Ψ
     
 end
 
