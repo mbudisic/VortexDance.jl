@@ -20,7 +20,7 @@ uses a different aggregation function across vortices. e.g. `aggregate=maximum`
 will use the strongest contribution, not the sum of contributions. This is nonphysical 
 but can be of interest.
 """
-function biotsavart(px::Vector{Float64}, py::Vector{Float64}, Γ::Vector{Float64}; aggregate=sum, core=1.0e-6)
+function biotsavart(px, py, Γ; aggregate=sum, core=1.0e-6)
 
     ppx = @view px[:,:]
     ppy = @view py[:,:]
@@ -49,6 +49,8 @@ function biotsavart(px::Vector{Float64}, py::Vector{Float64}, Γ::Vector{Float64
     V = sum( gradΨ, dims=2)
     V = permutedims( V[:,:,:], [1,3,2] )
     V = reshape(V, :, 1)
+
+    V = V[:]
 
 
     
