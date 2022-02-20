@@ -11,6 +11,7 @@ NBodySimulator = "0e6f8da7-a7fc-5c8b-a220-74e902c310f9"
 Plotly = "58dd65bb-95f3-509e-9936-c39a10fdeae7"
 
 [compat]
+Plotly = "0.4"
 julia = "1.6"
 
 [extras]
