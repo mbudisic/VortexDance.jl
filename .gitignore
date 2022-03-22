@@ -1,2 +1,6 @@
 /Manifest.toml
 /docs/build/
+test/.ipynb_checkpoints/copypaste-checkpoint.jl
+test/.ipynb_checkpoints/runtests-checkpoint.jl
+test/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+src/.ipynb_checkpoints/VortexDynamics2D-checkpoint.jl
