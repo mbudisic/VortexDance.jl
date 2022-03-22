@@ -5,7 +5,7 @@ using LinearAlgebra
 
 
 """
-    biotsavart(px, py, Γ; aggregate=sum)
+    biotsavart(pv, pe, Γ; aggregate=sum)
 
 Evaluate the stream function of a collection of 2d vortices with positions
 in vector `p` and circulations in vector `Γ` using the Biot--Savart law.
@@ -20,31 +20,28 @@ uses a different aggregation function across vortices. e.g. `aggregate=maximum`
 will use the strongest contribution, not the sum of contributions. This is nonphysical 
 but can be of interest.
 """
-function biotsavart(px, py, Γ; aggregate=sum, core=1.0e-6)
+function biotsavart(pv, pe, Γ; aggregate=sum, core=1.0e-6)
 
-    ppx = @view px[:,:]
-    ppy = @view py[:,:]
-    
-    # represent position vectors as row/column tensors
-    ppx = reshape(ppx, :, 2)
-    ppy = reshape(ppy, :, 2)
+    Nv = length(pv) ÷ 2
+    Ne = length(pe) ÷ 2
 
-    rx = permutedims( ppx[:,:,:], [1,3,2])
-    ry = permutedims( ppy[:,:,:], [3,1,2])
+    L = zeros(Nv,Ne)
+    D = zeros(Nv,Ne, 2)
 
-
-    D = rx .- ry # tensorized difference between all dimensions
+    # perp vectors between positions
+    for ix = 1:Nv
+        for iy = 1:Ne
+            D[ix,iy,2] = -( pv(ix)-pe(iy) )
+            D[ix,iy,1] = pv(ix+Nv) - pe(iy+Ne)
+        end
+    end
     L = sum( abs2, D, dims=3) .+ 0.0 # compute euclidean norm for each D(i,j,:)
-
-    # regularize the vortices by capping the stream function inside the core
-    # (this would result in zero velocity there --- this ensures that the vortex
-    # isn't moving itself)
     L[L .< core] .= core
 
     # compute the Biot--Savart
     #Ψ = -log.(L).*Γ/2/π
 
-    gradΨ  =  cat( -D[:,:,2], D[:,:,1]; dims=3) ./ (L.^2) .* Γ /2/π; 
+    gradΨ  =  D ./ (L.^2) .* Γ /2/π; 
 
     V = sum( gradΨ, dims=2)
     V = permutedims( V[:,:,:], [1,3,2] )
