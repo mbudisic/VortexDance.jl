@@ -1,19 +1,16 @@
+authors = ["Marko <mbudisic@clarkson.edu> and contributors"]
 name = "VortexDynamics2D"
 uuid = "da4b8f6b-df42-4834-94c6-5a2bcb78e49d"
-authors = ["Marko <mbudisic@clarkson.edu> and contributors"]
 version = "0.1.0"
-
-[deps]
-GeometricIntegratorsDiffEq = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
-Infiltrator = "5903a43b-9cc3-4c30-8d17-598619ec4e9b"
-JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
-NBodySimulator = "0e6f8da7-a7fc-5c8b-a220-74e902c310f9"
-Plotly = "58dd65bb-95f3-509e-9936-c39a10fdeae7"
 
 [compat]
 julia = "1.6"
 
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
 [extras]
+CPUSummary = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
