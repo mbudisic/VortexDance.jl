@@ -1,13 +1,14 @@
-authors = ["Marko <mbudisic@clarkson.edu> and contributors"]
 name = "VortexDynamics2D"
 uuid = "da4b8f6b-df42-4834-94c6-5a2bcb78e49d"
+authors = ["Marko <mbudisic@clarkson.edu> and contributors"]
 version = "0.1.0"
-
-[compat]
-julia = "1.6"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[compat]
+julia = "1.6"
 
 [extras]
 CPUSummary = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"
