@@ -1,5 +1,5 @@
 #region
-N = 4;
+N = 2;
 
 c1 = [-10.  -10.] .- 2*randn(N,2);
 c2 = [ 10.  -10.] .- 2*randn(N,2);
@@ -41,9 +41,9 @@ sol = solve(prob,Tsit5(),
 
 using Plots
 M = length(Γ)
-pp = plot( sol[1,:], sol[1+1,:])
-for k=3:2:M
-    plot!(pp, sol[k,:], sol[k+1,:])
+pp = plot( sol[1,:], sol[1+M,:])
+for k=2:M
+    plot!(pp, sol[k,:], sol[k+M,:])
 end
 #%xlims!((-15., 15.))
 #ylims!((-15., 15.))

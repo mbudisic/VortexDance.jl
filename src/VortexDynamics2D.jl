@@ -24,29 +24,27 @@ function biotsavart(pv, pe, Γ; aggregate=:sum, core=1.0e-6)
     #TODO Convert to non-allocating
     #TODO Add multiple-dispatch depending on the shape of inputs pv pe
 
-    pvx = @views pv[1:2:end]
-    pvy = @views pv[2:2:end]
+    Nv = length(pv) ÷ 2
+    Ne = length(pe) ÷ 2
 
-    pex = @views pe[1:2:end]
-    pey = @views pe[2:2:end]
+    pvx = @views pv[1:Nv]
+    pvy = @views pv[(Nv +1):end]
+
+    pex = @views pe[1:Ne]
+    pey = @views pe[(Ne + 1):end]
 
     # ensure that number of vertices is the same as number of circulations
     @assert size(pvx) == size(Γ)
 
-    Ne = size(pvx,1)
-    Nv = size(Γ,1)
-
     D = zeros( Ne,Nv, 2 )
     Lsq = zeros( Ne,Nv , 1 )
 
-    vectors_normal_to_pairs!(D, Lsq, [pvx pvy], [pex pey],core )
+    vectors_normal_to_pairs!(D, Lsq, [pex pey],[pvx pvy],core )
     # compute the Biot--Savart
-    perp_gradΨ  =  - (Γ/2/π) .* D ./ Lsq ; 
+    perp_gradΨ  =  - (transpose(Γ)/2/π) .* D ./ Lsq ; 
 
-    # add all vortex influences  size(V) = 1 x #evaluation points x 2
-    V = dropdims( sum( perp_gradΨ, dims=1 ); dims=1 )
-    V = transpose(V)
-
+    # add all vortex influences  size(V) = #evaluation points x 1 x 2
+    V = sum( perp_gradΨ, dims=2 );
     V = V[:]
     
 
