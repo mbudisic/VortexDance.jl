@@ -12,14 +12,14 @@ in vector `p` and circulations in vector `Γ` using the Biot--Savart law.
 `x` is the position of evaluation
 The length of vector `Γ` determines the number of vortices `N`.
 The length of vector `p` should be exactly `2N` with coordinates of vortices 
-interlaced, i.e., `x,y,x,y,...` 
+stacked, i.e., `x1,...,xN,y1,...,yN` 
 
 setting the keyword argument `aggregate` to something that is not `sum`
 uses a different aggregation function across vortices. e.g. `aggregate=maximum` 
 will use the strongest contribution, not the sum of contributions. This is nonphysical 
 but can be of interest.
 """
-function biotsavart(pv, pe, Γ; aggregate=:sum, core=1.0e-6)
+function biotsavart(pe,pv, Γ; aggregate=:sum, core=1.0e-6)
 
     #TODO Convert to non-allocating
     #TODO Add multiple-dispatch depending on the shape of inputs pv pe
