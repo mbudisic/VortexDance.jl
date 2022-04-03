@@ -1,8 +1,7 @@
 module VortexDynamics2D
 
 using LinearAlgebra
-using Infiltrator
-
+using StaticArrays
 
 """
     biotsavart(pv, pe, Γ; aggregate=sum)
@@ -22,46 +21,61 @@ but can be of interest.
 """
 function biotsavart(pv, pe, Γ; aggregate=:sum, core=1.0e-6)
 
-    pvx = @view pv[1:2:end]
-    pvy = @view pv[2:2:end]
+    #TODO Convert to non-allocating
+    #TODO Add multiple-dispatch depending on the shape of inputs pv pe
 
-    pex = @view pe[1:2:end]
-    pey = @view pe[2:2:end]
+    pvx = @views pv[1:2:end]
+    pvy = @views pv[2:2:end]
+
+    pex = @views pe[1:2:end]
+    pey = @views pe[2:2:end]
 
     # ensure that number of vertices is the same as number of circulations
     @assert size(pvx) == size(Γ)
 
-    D = -cat( pvy .- transpose( pey ), -( pvx .- transpose( pex ) ); dims=3  )
+    Ne = size(pvx,1)
+    Nv = size(Γ,1)
 
-    L = dropdims( sum( abs2, D, dims=3) .+ 0.0; dims=3) # compute euclidean norm for each D(i,j,:)
-    
-    strongest_vortex = findmax(L; dims = 1)
+    D = zeros( Ne,Nv, 2 )
+    Lsq = zeros( Ne,Nv , 1 )
 
-    D[ L .< core .^2, : ] .= 0.0
-    L[ L .< core .^2 ] .= core .^2 
+    vectors_normal_to_pairs!(D, Lsq, [pvx pvy], [pex pey],core )
     # compute the Biot--Savart
-    #Ψ = -log.(L).*Γ/2/π
-
-    perp_gradΨ  =  - (Γ/2/π) .* D ./ L ; 
-    # perp_gradΨ[sel,:] .= 0.0
-
-    # size(perp_gradΨ) = # vortices x # evaluation points x 2 (x,y)
+    perp_gradΨ  =  - (Γ/2/π) .* D ./ Lsq ; 
 
     # add all vortex influences  size(V) = 1 x #evaluation points x 2
-    if aggregate == :sum
-        V = dropdims( sum( perp_gradΨ, dims=1 ); dims=1 )
-        V = transpose(V)
-    elseif aggregate == :max
-        V = dropdims( perp_gradΨ[strongest_vortex[2],:]; dims=1)
-        V = transpose(V)
-    else
-        error("Unknown aggregation")
-    end
+    V = dropdims( sum( perp_gradΨ, dims=1 ); dims=1 )
+    V = transpose(V)
 
     V = V[:]
     
 
 end
 
+"""
+Computes perps to p1-p2 and the euclidean-squared norm.
+
+
+both p1 and p2 are assumed to be N1x2, N2x2 matrices
+D is N1 x N2 x 2
+L is N1 x N2 x 1
+
+If optional argument is passed, distances shorter than core_dist are 
+set to core_dist, and the associated perp vectors are set to zero vectors
+"""
+function vectors_normal_to_pairs!( D, Lsq, p1, p2, core_dist = 0)
+    @views D[:,:,1] .= p1[:,2] .- transpose( p2[:,2] )
+    @views D[:,:,2] .=  -( p1[:,1] .- transpose( p2[:,1] ) )
+
+    sum!( Lsq, D.^2 ) # compute euclidean norm for each D(i,j,:)
+
+    if core_dist == 0
+        return
+    end
+    sel = @. Lsq < core_dist^2
+    @. D[ sel, : ] = 0
+    @. Lsq[ sel ] = core_dist^2 
+
+end
 
 end
