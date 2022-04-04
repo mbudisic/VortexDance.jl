@@ -1,5 +1,5 @@
 #region
-N = 300;
+N = 30;
 
 c1 = [-10.  -10.] .- 2*randn(N,2);
 c2 = [ 10.  -10.] .- 2*randn(N,2);
@@ -37,8 +37,8 @@ prob = ODEProblem(
     tspan,
     Γ)
 
-sol = solve(prob,Tsit5(),
-    abstol=1e-6, reltol=1e-6,saveat=0.01)
+@time sol = solve(prob,AutoTsit5(Rodas5()),
+    abstol=1e-3, reltol=1e-3,saveat=0.01)
 
 using Plots
 Nv = length(Γ)
