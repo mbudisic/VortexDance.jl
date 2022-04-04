@@ -67,10 +67,7 @@ function vectors_normal_to_pairs!( D, Lsq, p1, p2, core_dist = 0)
 
     sum!( Lsq, D.^2 ) # compute euclidean norm for each D(i,j,:)
 
-    if core_dist == 0
-        return
-    end
-    sel = @. Lsq < core_dist^2
+    sel = @. Lsq <= core_dist^2
     @. D[ sel, : ] = 0
     @. Lsq[ sel ] = core_dist^2 
 
