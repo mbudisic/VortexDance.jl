@@ -1,9 +1,10 @@
 module VortexDynamics2D
 
 import LinearAlgebra
-import DifferentialEquations
-import SplitApplyCombine: invert
+using DifferentialEquations
 
+export vortexdance
+export biotsavart
 
 """
 
@@ -17,13 +18,12 @@ function vortexdance( p_initial, Γ, T )
     
     tspan = (0, T)
 
-    diffeq = DifferentialEquations.ODEProblem(
+    diffeq = ODEProblem(
     velocityfield,
     p_initial,
     tspan,
     Γ)
-    sol = DifferentialEquations.solve( diffeq, 
-        DifferentialEquations.AutoTsit5(DifferentialEquations.Rosenbrock23()) )
+    sol = solve( diffeq, AutoTsit5(Rosenbrock23()) )
 
     return sol
 end

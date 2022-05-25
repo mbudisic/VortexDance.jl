@@ -1,3 +1,6 @@
+using .VortexDynamics2D
+using .VortexDynamics2DVisualize
+
 #region
 N = 20
 
@@ -6,7 +9,7 @@ c = randn(N, 2) * 10.0
 u0 = Float64.(c[:])
 Γ = Float64.(Γ[:] ./ N)
 
-sol = VortexDynamics2D.vortexdance( u0, Γ, 500)
+sol = vortexdance( u0, Γ, 500)
 #endregion
 
 #region
@@ -16,32 +19,31 @@ using Printf
 
 
 # animation settings
-nframes = 250
-framerate = 30
+nframes = 50
 time_iterator = range(0, 500, length=nframes)
 resolution = 61
 
 t = 0
-fig = Figure()
+fig = Figure(resolution = (800, 600))
 ax = Axis(fig[1,1])
-sc_h, ar_h = VortexDynamics2D.plotvf( sol(t),Γ; N=resolution, ax=ax )
+sc_h, ar_h = plotvf( sol(t),Γ; N=resolution, ax=ax )
 Colorbar(fig[1, 2], sc_h, label = "Circulation Γ")
 #Colorbar(fig[2, 1], ar_h, label = "Speed")
 
 ax.title = "t = $(@sprintf("%0.3f",t))"
-
-record(fig, "test.mp4", time_iterator;
-        framerate = framerate) do t
-
+fps=60
+for (idx,t) in enumerate(time_iterator)
             ax.title = ("t = $(@sprintf("%0.3f",t))")
             ax
-            VortexDynamics2D.plotvf( sol(t),Γ; N=resolution, ax=ax )
+            plotvf( sol(t),Γ; N=resolution, ax=ax )
 
             println("t = $(@sprintf("%0.3f",t)) done")
 
+            save("vortex_$(@sprintf("%03d",idx)).png",fig)
+            #sleep(1/fps)
 
             
-        end
+end
 
 
 
