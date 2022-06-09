@@ -1,10 +1,14 @@
 module VortexDynamics2D
 
-import LinearAlgebra
+using LinearAlgebra:norm
 using DifferentialEquations
+using StaticArrays
 
 export vortexdance
 export biotsavart
+export vectornormal
+
+const Point{T} = StaticArrays.SVector{2,T}
 
 """
 
@@ -25,8 +29,38 @@ function vortexdance( p_initial, Γ, T )
     Γ)
     sol = solve( diffeq, AutoTsit5(Rosenbrock23()) )
 
-    return sol
+    return sol, diffeq
 end
+
+"""
+
+
+"""
+function biotsavart( pe::Point, pv::Vector{Point}, Γ::Vector )
+
+    # ensure that number of vertices is the same as number of circulations
+    @assert size(pv) == size(Γ)
+
+
+
+end
+
+"""
+sometext
+"""
+function vectornormal( p1::Point, p2::Point )
+
+    perp = StaticArrays.@SMatrix [0 -1; 
+                                  1  0]
+
+    N = perp*(p2 - p1)
+    D = norm(N)
+
+    return N,D
+
+
+end
+
 
 """
     biotsavart(pv, pe, Γ; aggregate=sum)
