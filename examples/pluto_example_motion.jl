@@ -29,11 +29,10 @@ end
 
 # ╔═╡ 92a981be-1161-4cc8-a404-be0bdeab2903
 begin
-#	Pkg.add(
-#		url="git@github.com:mbudisic/VortexDance.jl.git",
-#		rev="master"
-#	)
-	Pkg.add(url="/Users/marko/Work/Projects/VortexDynamics/VortexDance.jl")
+	Pkg.add(
+		url="git@github.com:mbudisic/VortexDance.jl.git",
+		rev="master"
+	) # the github url can be replaced by a local path to the repository
 	using VortexDance
 end
 
