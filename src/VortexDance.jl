@@ -81,8 +81,8 @@ function biotsavart( pe::Vector{T}, pv::Vector{T}, Γ::Vector; core=1e-12) where
     distances = norm.(normals)
     
     # individual contribution to velocity field and stream function
-    vfs = -(1/2/π) * (Γ .* normals ) ./ (distances .^ 2 .+ core .^2 )
-    streams = (-1/2/π) * Γ .* log.(distances .+ core)
+    vfs = -(1/2/π) * (Γ' .* normals ) ./ (distances .^ 2 .+ core .^2 )
+    streams = (-1/2/π) * Γ' .* log.(distances .+ core)
     
     # sum all contributions
     vf = vec(  sum(vfs, dims=2) )
