@@ -54,7 +54,8 @@ end
 
 function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
     
-    return biotsavart( [pe,], pv, Γ; core)
+    vf,stream= biotsavart( [pe,], pv, Γ; core)
+    return vf[1],stream[1] # evaluation at a single point was requested
 
 end
 
