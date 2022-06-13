@@ -54,7 +54,7 @@ end
 
 function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
     
-    return biotsavart( [pe], pv, Γ; core)
+    return biotsavart( [pe;;], pv, Γ; core)
 
 end
 
@@ -62,7 +62,7 @@ end
 
 
 """
-function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
+function biotsavart( pe::AbstractMatrix{T}, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
     
     # ensure that number of vertices is the same as number of circulations
     @assert length(pv) == length(Γ)
