@@ -1,14 +1,14 @@
 ```@meta
-CurrentModule = VortexDynamics2D
+CurrentModule = VortexDance
 ```
 
-# VortexDynamics2D
+# VortexDance
 
-Documentation for [VortexDynamics2D](https://github.com/mbudisic/VortexDynamics2D.jl).
+Documentation for [VortexDance](https://github.com/mbudisic/VortexDance.jl).
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [VortexDynamics2D]
+Modules = [VortexDance]
 ```
