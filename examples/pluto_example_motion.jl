@@ -21,7 +21,8 @@ begin
 	using Pkg
 	using CairoMakie
 	Pkg.add("PlutoUI")
-	using PlutoUI	
+	using PlutoUI
+	using Random
 md"""
 Cell hidden - packages here are just needed for the notebook.
 """	
@@ -78,7 +79,10 @@ We initialize a vector of vortices by generating a random matrix, and then conve
 """
 
 # ╔═╡ b2f950bf-6966-4f04-8399-1fa5ccd2c112
-x = [Vec2D(c) for c in eachcol(rand(2,N)*8)]; # semicolon prevents output
+myRNG = Random.MersenneTwister(50*N);
+
+# ╔═╡ a5f01b94-0375-4f4d-bbf8-df3547550ba5
+x = [Vec2D(c) for c in eachcol(rand(myRNG,2,N)*8)]; # semicolon prevents output
 
 # ╔═╡ 94f17601-cdec-4a08-84b5-916d386978fa
 md"""
@@ -86,7 +90,7 @@ Circulations $\Gamma$ are chosen as fluctuations around $\pm 2$.
 """
 
 # ╔═╡ bda16484-a8d0-4c34-be10-a37870444017
-Γ = randn(N) + 2 .* sign.(randn(N))
+Γ = randn(myRNG,N) + 2 .* sign.(randn(myRNG,N))
 
 # ╔═╡ 674ff49a-a8e5-4a0c-b4f1-6cdb25324b4b
 md"""
@@ -182,6 +186,7 @@ Vortex color is determined by their circulation.
 # ╠═92a981be-1161-4cc8-a404-be0bdeab2903
 # ╟─bbfabf36-9659-4790-80bd-2b980248cf82
 # ╠═b2f950bf-6966-4f04-8399-1fa5ccd2c112
+# ╠═a5f01b94-0375-4f4d-bbf8-df3547550ba5
 # ╟─94f17601-cdec-4a08-84b5-916d386978fa
 # ╠═bda16484-a8d0-4c34-be10-a37870444017
 # ╟─674ff49a-a8e5-4a0c-b4f1-6cdb25324b4b
