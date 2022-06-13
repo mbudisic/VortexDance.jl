@@ -54,7 +54,7 @@ end
 
 function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
     
-    return biotsavart( [pe;;], pv, Γ; core)
+    return biotsavart( [pe,], pv, Γ; core)
 
 end
 
@@ -74,8 +74,10 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
     S = @SMatrix [0 1; -1 0]
     normals = broadcast( 
         x->S*x, 
-        reshape( view( pe, :, : ), : , 1 ) .- reshape( view( pv, :, :), 1, :  ) 
+        reshape( view( pe, :, : ), 1, : ) .- reshape( view( pv, :, :), :, 1  ) 
         )
+    
+    Γ = reshape( view( Γ, :, :), :, 1  )
     
     # distances between evaluation Vec2D and vortices
     distances = norm.(normals)
@@ -85,8 +87,8 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
     streams = (-1/2/π) * Γ .* log.(distances .+ core)
     
     # sum all contributions
-    vf = vec(  sum(vfs, dims=2) )
-    stream = vec( sum(streams, dims=2) )
+    vf = vec(  sum(vfs, dims=1) )
+    stream = vec( sum(streams, dims=1) )
 
     # note to future self: 
     #   once we're trying to implement "max" or "min" 
