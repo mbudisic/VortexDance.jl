@@ -7,5 +7,12 @@ This package defines the corresponding velocity field and stream function, with 
 
 The motion of vortices is simulated using ![`DifferentialEquations.jl`](https://github.com/SciML/DifferentialEquations.jl) package.
 
-After cloning the repository, run the Pluto notebook in `examples/pluto_example_motion.jl`. An example of the output is:
+After cloning the repository, run the Pluto notebook in `examples/pluto_example_motion.jl`. Navigate to the local folder 
+```
+julia> using Pluto
+julia> Pluto.run(notebook="path/to/repo/examples/pluto_example_motion.jl")
+```
+
+After playing with the number of vortices and simulation length, you should be able to obtain something like:
+
 ![five_vortices](https://user-images.githubusercontent.com/748221/173427025-1abdca3e-d21f-429e-a1c6-846e74b724a7.png)
