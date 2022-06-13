@@ -1,4 +1,4 @@
 using Test
-@testset "VortexDynamics2D.jl" begin
+@testset "VortexDance.jl" begin
     # Write your tests here.
 end

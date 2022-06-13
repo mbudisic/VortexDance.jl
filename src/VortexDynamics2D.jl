@@ -1,4 +1,4 @@
-module VortexDynamics2D
+module VortexDance
 
 using LinearAlgebra:norm
 using DifferentialEquations

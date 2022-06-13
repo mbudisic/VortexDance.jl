@@ -6,7 +6,7 @@ N = 61
 xs = LinRange(-20, 20, N)
 ys = LinRange(-20, 20, N)
 
-F(x,y) = VortexDynamics2D.biotsavart([x y],u0,Γ;core=1e-3)
+F(x,y) = VortexDance.biotsavart([x y],u0,Γ;core=1e-3)
 
 uv = [ F(x,y) for x in xs, y in ys ]
 strength = norm.(uv)

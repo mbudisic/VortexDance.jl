@@ -1,9 +1,9 @@
-module VortexDynamics2DVisualize
+module VortexDanceVisualize
 
 export plotvf
 
-include("VortexDynamics2D.jl")
-using .VortexDynamics2D
+include("VortexDance.jl")
+using .VortexDance
 using CairoMakie: Makie
 using SplitApplyCombine:invert
 using LinearAlgebra:norm
@@ -14,7 +14,7 @@ function plotvf( pv, Γ; N = 21,
     ax = Makie.current_axis() )
     
     # compute the velocity field
-    F(x,y) = VortexDynamics2D.biotsavart([x y],pv,Γ;core=1e-3)
+    F(x,y) = VortexDance.biotsavart([x y],pv,Γ;core=1e-3)
     uv = [ F(x,y) for x in xs, y in ys ] # list of value pairs (pointwise vectors)
     
     speed = norm.(uv)

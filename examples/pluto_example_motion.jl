@@ -26,10 +26,10 @@ end
 # ╔═╡ 92a981be-1161-4cc8-a404-be0bdeab2903
 begin
 	Pkg.add(
-		url="git@github.com:mbudisic/VortexDynamics2D.jl.git",
+		url="git@github.com:mbudisic/VortexDance.jl.git",
 		rev="TwoColumnState"
 	)
-	using VortexDynamics2D
+	using VortexDance
 end
 
 # ╔═╡ bafe96b0-2207-4533-ba11-09de45d2e0d5

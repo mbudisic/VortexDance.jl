@@ -1,6 +1,6 @@
 # simple demo of vortex dance
 
-using .VortexDynamics2D
+using .VortexDance
 using CairoMakie
 
 # set up the initial configuration

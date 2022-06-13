@@ -3,7 +3,7 @@ using StaticArrays
 
 XYgrid = RectiGrids.grid(SVector{2,}, -20.:20, -40.:40)
 
-vf(xy) = VortexDynamics2D.biotsavart(xy, u0, Γ; core=1e-3)
+vf(xy) = VortexDance.biotsavart(xy, u0, Γ; core=1e-3)
 
 VF = vf.(XYgrid)
 

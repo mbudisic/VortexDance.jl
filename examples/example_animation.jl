@@ -1,5 +1,5 @@
-using .VortexDynamics2D
-using .VortexDynamics2DVisualize
+using .VortexDance
+using .VortexDanceVisualize
 
 #region
 N = 20

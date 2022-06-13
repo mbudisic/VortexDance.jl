@@ -1,16 +1,16 @@
-using VortexDynamics2D
+using VortexDance
 using Documenter
 
-DocMeta.setdocmeta!(VortexDynamics2D, :DocTestSetup, :(using VortexDynamics2D); recursive=true)
+DocMeta.setdocmeta!(VortexDance, :DocTestSetup, :(using VortexDance); recursive=true)
 
 makedocs(;
-    modules=[VortexDynamics2D],
+    modules=[VortexDance],
     authors="Marko <mbudisic@clarkson.edu> and contributors",
-    repo="https://github.com/mbudisic/VortexDynamics2D.jl/blob/{commit}{path}#{line}",
-    sitename="VortexDynamics2D.jl",
+    repo="https://github.com/mbudisic/VortexDance.jl/blob/{commit}{path}#{line}",
+    sitename="VortexDance.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://mbudisic.github.io/VortexDynamics2D.jl",
+        canonical="https://mbudisic.github.io/VortexDance.jl",
         assets=String[],
     ),
     pages=[
@@ -19,6 +19,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/mbudisic/VortexDynamics2D.jl",
+    repo="github.com/mbudisic/VortexDance.jl",
     devbranch="master",
 )
