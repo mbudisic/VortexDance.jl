@@ -29,10 +29,11 @@ end
 
 # ╔═╡ 92a981be-1161-4cc8-a404-be0bdeab2903
 begin
-	Pkg.add(
-		url="git@github.com:mbudisic/VortexDance.jl.git",
-		rev="master"
-	)
+#	Pkg.add(
+#		url="git@github.com:mbudisic/VortexDance.jl.git",
+#		rev="master"
+#	)
+	Pkg.add(url="/Users/marko/Work/Projects/VortexDynamics/VortexDance.jl")
 	using VortexDance
 end
 
@@ -93,25 +94,23 @@ md"""
 Function `VortexDance.vortexdance(...)` takes in initial locations, circulations, duration, and produces the trajectories. Remember: `T` was defined by the slider at the beginning of the notebook.
 """
 
-# ╔═╡ 4d5bcded-a614-4874-9e8b-ad17e55a19a1
-sol,  = vortexdance( x, Γ, T); 
-# the comma skips assigning the second output to the variable, similar to `sol, ~ = vortexdance(...)` in MATLAB syntax
+# ╔═╡ e31220b4-5d2d-4006-b302-773ce8bdf6d9
+sol_matrix, sol, diffeq  = vortexdance( x, Γ, 0:0.01:T);
 
-# ╔═╡ 0881d630-f54e-4f69-bf05-85dfb34da9f6
+# ╔═╡ 6feabdee-f7cc-4fda-af66-de4962fcc38a
 md"""
-Solution object allows seamless resampling/interpolation of the outputs at any point between initial and final time. E.g. we can do something like getting the solution at $t=\pi$:
+The first output is the solution interpolated at the range of values passed in. It's produced only if the time is specified as a vector of values. This is in the "matrix of points" format - rows are timesteps, columns correspond to vortices.
+
+Second output is a solution structure that can be evaluated at any point in time. e.g. running `sol(π)=`
 """
 
-# ╔═╡ f06fbe02-ef0b-42fb-896c-92f817eb5c69
-sol(π)
+# ╔═╡ 0153f562-0e64-4906-bd47-42e56aa912a1
+display(sol(π))
 
-# ╔═╡ de0f545e-5edc-485f-b24c-2fe76fe4af3b
+# ╔═╡ 0d3afbe2-d998-4033-a486-a40eccd65094
 md"""
-To visualize the vortex dance, we're going interpolate the solution at a uniform timestep.
+Third output is the differential equation structure, that stores all kinds of info about a problem, and could be re-solved using a different numerical solver.
 """
-
-# ╔═╡ 59a98a8a-095d-4426-b23a-dd31cf9b7963
-t = 0:0.01:T; sol_traces = sol(t); 
 
 # ╔═╡ 86eda4c7-d596-4f1c-8105-68930c94ac07
 md"""
@@ -119,28 +118,40 @@ The next block of code produces the figure of the vortex solution. Each vortex t
 """
 
 # ╔═╡ 4ae17fc3-1779-454d-9061-2575e7adfca5
-# visualize locations of vortices
+# invoking vortex_figure in a cell displays the output of this block
 vortex_figure = with_theme(theme_minimal()) do
 	
 	fig = Figure(resolution=(400,400))
 
+	# figure has two Axes: "main" ....
 	ax = Axis(fig[1,1], 
             xlabel = "x", 
             ylabel = "y", 
             title = "$N vortices, t ∈ [0,$T]",
 			aspect=1)
 
+	# ... and "colorbar"
 	range_of_Γ = Tuple([-1,1] * maximum(abs.(Γ)))
-    Colorbar(fig[1,2],limits=range_of_Γ,colormap=:balance,label="Circulation Γ")
+    Colorbar(fig[1,2],
+		limits=range_of_Γ,
+		colormap=:balance,
+		label="Circulation Γ")
 
-    # for each vortex
-	for k in eachindex(Γ)
-		xs = first.([snapshot[k] for snapshot in sol_traces])
-		ys = last.([snapshot[k] for snapshot in sol_traces])
+    # iterate over vortex trajectories
+	# this syntax assigns variable name to index and value of each element
+	for (k, vortex) in enumerate(eachcol(sol_matrix))
 
-		Makie.lines!(ax,xs,ys,
+		# extract first/last element (=x,y coordinates) for each vortex trajectory
+		xs = first.(sol_matrix[:,k])
+		ys = last.(sol_matrix[:,k])
+
+		# make the color vector of the same size
+		mycolor = fill( Γ[k], size(sol_matrix,1) )
+
+		# display a line
+		Makie.lines!(ax,xs, ys,
 			legend_label = "Vortex $k",
-			color=repeat( [Γ[k]], inner=(length(t),) ), 
+			color=mycolor, 
 			colormap=:balance,
 			colorrange=range_of_Γ
 		)
@@ -159,7 +170,7 @@ Vortex color is determined by their circulation.
 
 """
 
-# ╔═╡ 63615a2e-57f2-4f6d-968a-57bf28e8ce4a
+# ╔═╡ fad93175-d66f-4d08-86ab-e62311b657a6
 
 
 # ╔═╡ Cell order:
@@ -175,11 +186,10 @@ Vortex color is determined by their circulation.
 # ╟─94f17601-cdec-4a08-84b5-916d386978fa
 # ╠═bda16484-a8d0-4c34-be10-a37870444017
 # ╟─674ff49a-a8e5-4a0c-b4f1-6cdb25324b4b
-# ╠═4d5bcded-a614-4874-9e8b-ad17e55a19a1
-# ╟─0881d630-f54e-4f69-bf05-85dfb34da9f6
-# ╠═f06fbe02-ef0b-42fb-896c-92f817eb5c69
-# ╟─de0f545e-5edc-485f-b24c-2fe76fe4af3b
-# ╠═59a98a8a-095d-4426-b23a-dd31cf9b7963
+# ╠═e31220b4-5d2d-4006-b302-773ce8bdf6d9
+# ╟─6feabdee-f7cc-4fda-af66-de4962fcc38a
+# ╟─0153f562-0e64-4906-bd47-42e56aa912a1
+# ╟─0d3afbe2-d998-4033-a486-a40eccd65094
 # ╟─86eda4c7-d596-4f1c-8105-68930c94ac07
 # ╠═4ae17fc3-1779-454d-9061-2575e7adfca5
-# ╠═63615a2e-57f2-4f6d-968a-57bf28e8ce4a
+# ╠═fad93175-d66f-4d08-86ab-e62311b657a6
