@@ -23,6 +23,7 @@ begin
 	Pkg.add("PlutoUI")
 	using PlutoUI
 	using Random
+	using StaticArrays
 md"""
 Cell hidden - packages here are just needed for the notebook.
 """	
@@ -31,11 +32,18 @@ end
 # ╔═╡ 92a981be-1161-4cc8-a404-be0bdeab2903
 begin
 	Pkg.add(
-		url="git@github.com:mbudisic/VortexDance.jl.git",
-		rev="master"
+		url="/Users/marko/Work/Projects/VortexDynamics/VortexDance.jl",
+		rev="develop"
 	) # the github url can be replaced by a local path to the repository
 	using VortexDance
 end
+
+# ╔═╡ fad93175-d66f-4d08-86ab-e62311b657a6
+begin
+	Pkg.add("RectiGrids")
+	using RectiGrids
+end
+
 
 # ╔═╡ 0d8aded3-5ec4-49f8-8eb4-f49cdde86624
 md"""
@@ -173,8 +181,62 @@ Vortex color is determined by their circulation.
 
 """
 
-# ╔═╡ fad93175-d66f-4d08-86ab-e62311b657a6
+# ╔═╡ cf6a1b02-4117-4901-a10f-df1f66fd15fe
+md"""
+## Plot the velocity field and stream function
+"""
 
+# ╔═╡ 5b4d8a1f-d4dc-4b32-8b39-a5f44e051037
+md"""
+First, define the grid on the domain of interest
+"""
+
+# ╔═╡ f7e82fdf-94d4-4944-82b2-ba5e1f36b644
+begin
+	xax = 0.:0.25:10
+	yax = 0.:0.25:10
+	XY = RectiGrids.grid(SVector{2,}, xax, yax);
+end;
+
+# ╔═╡ aa7ed56a-56c8-4610-b5c7-a705e5ef2ed6
+md"""
+Then, choose the timeslice that is going to be visualized
+
+Slice number K = $(@bind K PlutoUI.Slider(1:100:size(sol_matrix,1), show_value=true))
+"""
+
+# ╔═╡ 7ac0257f-4ed2-4121-a0f1-aa09eb1d2fbb
+timeslice = sol_matrix[K,:];
+
+# ╔═╡ 67d21554-6880-4187-bd48-b5751aee083b
+# option1 - define custom function and broadcast it across the array
+VF = let
+	vortex_vf(xy) = first( VortexDance.biotsavart(xy, timeslice, Γ;core=1e-1) )
+	vortex_vf.(XY)
+end
+
+# ╔═╡ 192a3fad-96ba-4780-94bd-d38ef5f1b8d5
+# more Julian way - broadcast, but protect timeslice and \Gamma against 
+#VF = first.(VortexDance.biotsavart.(XY, Ref(timeslice), Ref(Γ); core=1e-1))
+
+# ╔═╡ fbe45f3e-b7e3-40f8-b3c2-0e6fc4bca0da
+# invoking vortex_figure in a cell displays the output of this block
+velocity_figure = with_theme(theme_minimal()) do
+	fig = Figure(resolution=(400,400))
+
+	ax = Axis(fig[1,1], 
+            xlabel = "x", 
+            ylabel = "y", 
+            title = "$N vortices, t ∈ [0,$T]",
+			aspect=1)
+
+	Makie.arrows(xax, yax,first.(VF)/10, last.(VF)/10; normalize=false)
+end;
+
+# ╔═╡ 6f00e2ed-521c-4c56-9bfd-3ec0e7b73808
+md"""
+$(velocity_figure)
+"""
 
 # ╔═╡ Cell order:
 # ╟─0d8aded3-5ec4-49f8-8eb4-f49cdde86624
@@ -197,3 +259,12 @@ Vortex color is determined by their circulation.
 # ╟─86eda4c7-d596-4f1c-8105-68930c94ac07
 # ╠═4ae17fc3-1779-454d-9061-2575e7adfca5
 # ╠═fad93175-d66f-4d08-86ab-e62311b657a6
+# ╟─cf6a1b02-4117-4901-a10f-df1f66fd15fe
+# ╟─5b4d8a1f-d4dc-4b32-8b39-a5f44e051037
+# ╠═f7e82fdf-94d4-4944-82b2-ba5e1f36b644
+# ╟─aa7ed56a-56c8-4610-b5c7-a705e5ef2ed6
+# ╟─6f00e2ed-521c-4c56-9bfd-3ec0e7b73808
+# ╠═7ac0257f-4ed2-4121-a0f1-aa09eb1d2fbb
+# ╠═67d21554-6880-4187-bd48-b5751aee083b
+# ╠═192a3fad-96ba-4780-94bd-d38ef5f1b8d5
+# ╠═fbe45f3e-b7e3-40f8-b3c2-0e6fc4bca0da
