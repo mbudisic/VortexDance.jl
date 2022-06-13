@@ -10,12 +10,13 @@ export Vec2D
 
 const Vec2D{T} = StaticArrays.SVector{2,T}
 
-function vortexdance( p_initial, Γ, T )
+"""
+This version of the function creates a return function that can be interpolated
+"""
+function vortexdance( p_initial, Γ, tspan::Tuple{Real, Real} )
     
     velocityfield(u, p, t) = biotsavart(u, u, p)[1]
-    
-    tspan = (0, T)
-    
+        
     diffeq = ODEProblem(
     velocityfield,
     p_initial,
@@ -24,6 +25,30 @@ function vortexdance( p_initial, Γ, T )
     sol = solve( diffeq, Tsit5() )
     
     return sol, diffeq
+end
+
+function vortexdance( p_initial, Γ, Tend::Real )
+
+    return vortexdance(p_initial, Γ, (0, Tend) )
+
+end
+
+"""
+This version of the function creates an interpolated array
+"""
+function vortexdance( p_initial, Γ, T::AbstractVector )
+
+    # evaluate solution for the endpoints of the range
+    sol, diffeq = vortexdance(p_initial, Γ, (first(T), last(T)) )
+
+    # interpolate solution
+    sol_traces = sol(T)
+
+    # create a matrix of the solution
+    sol_matrix = mapreduce( permutedims, vcat, sol_traces.u )
+
+    return sol_matrix, sol, diffeq
+
 end
 
 
