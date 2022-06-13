@@ -79,7 +79,7 @@ We initialize a vector of vortices by generating a random matrix, and then conve
 """
 
 # ╔═╡ b2f950bf-6966-4f04-8399-1fa5ccd2c112
-myRNG = Random.MersenneTwister(50*N);
+myRNG = Random.MersenneTwister(50*N); # reproducible randomness
 
 # ╔═╡ a5f01b94-0375-4f4d-bbf8-df3547550ba5
 x = [Vec2D(c) for c in eachcol(rand(myRNG,2,N)*8)]; # semicolon prevents output
