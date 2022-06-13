@@ -82,9 +82,9 @@ function biotsavart( pe::Point, pv::Vector{T}, Γ::Vector; core=1e-12) where {T 
 	# ensure that number of vertices is the same as number of circulations
     @assert length(pv) == length(Γ)
 
-    # compute normal to distance to point
+    # compute normal to all pairwise distance vectors
     S = @SMatrix [0 1; -1 0]
-    normals = broadcast( x->S*x, [pe] .- pv )
+    normals = broadcast( x->S*x, reshape(view(pe,:,:),:,1) .- reshape(view(pv,:,:) )
 
     # distances between evaluation point and vortices
     distances = norm.(normals)
@@ -209,8 +209,39 @@ begin
 	fig
 end
 
-# ╔═╡ cff380f2-95ac-411e-9091-3f04f300b72d
+# ╔═╡ 699b540f-d712-4b3e-b90d-dbbebe4444e0
+begin
+	v1 = [Point(c) for c in eachcol(rand(2,3))]
+	v2 = [Point(c) for c in eachcol(rand(2,5))]
+	γ = rand(1,5)
+end
 
+# ╔═╡ 79a21d73-dfa9-42b7-aabf-0e246a19e4b9
+
+
+# ╔═╡ cff380f2-95ac-411e-9091-3f04f300b72d
+dd = reshape(view(v1,:,:),:,1) .- reshape(view(v2,:,:), 1,:)
+
+# ╔═╡ b514f6b0-cd2c-4a7e-91b7-12dce52f116f
+normals = broadcast( x -> S*x, dd)
+
+# ╔═╡ a2ebeceb-35c8-4806-bdd3-ea46884e6134
+normals .* γ
+
+# ╔═╡ 9a99ab2c-f7dc-4c0b-b5b0-160851501f2d
+γ .* normals == normals .* γ
+
+# ╔═╡ 528702ae-a57b-4073-b2bd-e875c966aeaa
+length(ps), size(dd)
+
+# ╔═╡ 0debf5b2-40cd-4cd9-898e-eab2e1b188cb
+dd
+
+# ╔═╡ 4f1d0bc7-ee1d-46e2-b5c1-ae97ce11cb76
+a1, ind = findmin(norm.(dd), dims=2) 
+
+# ╔═╡ 8a692fa4-2d0d-447e-b494-e6fe54fb2a88
+Point
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2142,6 +2173,15 @@ version = "0.9.1+5"
 # ╠═b5586e0b-5b4b-47a4-9575-7fccc3e84435
 # ╠═b4ac5b32-1f79-4780-839e-459334df2e25
 # ╠═9cb58616-dca0-47df-ad05-9896c729529a
+# ╠═699b540f-d712-4b3e-b90d-dbbebe4444e0
+# ╠═79a21d73-dfa9-42b7-aabf-0e246a19e4b9
 # ╠═cff380f2-95ac-411e-9091-3f04f300b72d
+# ╠═b514f6b0-cd2c-4a7e-91b7-12dce52f116f
+# ╠═a2ebeceb-35c8-4806-bdd3-ea46884e6134
+# ╠═9a99ab2c-f7dc-4c0b-b5b0-160851501f2d
+# ╠═528702ae-a57b-4073-b2bd-e875c966aeaa
+# ╠═0debf5b2-40cd-4cd9-898e-eab2e1b188cb
+# ╠═4f1d0bc7-ee1d-46e2-b5c1-ae97ce11cb76
+# ╠═8a692fa4-2d0d-447e-b494-e6fe54fb2a88
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
