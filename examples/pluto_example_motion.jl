@@ -27,7 +27,7 @@ end
 begin
 	Pkg.add(
 		url="git@github.com:mbudisic/VortexDance.jl.git",
-		rev="TwoColumnState"
+		rev="master"
 	)
 	using VortexDance
 end
