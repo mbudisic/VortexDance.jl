@@ -15,7 +15,7 @@ This version of the function creates a return function that can be interpolated
 """
 function vortexdance( p_initial, Γ, tspan::Tuple{Real, Real} )
     
-    velocityfield(u, p, t) = biotsavart(u, u, p)[1]
+    velocityfield(u, p, t) = biotsavart(u, u, p; field=:velocity)
         
     diffeq = ODEProblem(
     velocityfield,
@@ -52,10 +52,10 @@ function vortexdance( p_initial, Γ, T::AbstractVector )
 end
 
 
-function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
+function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; args...) where {T <: Vec2D}
     
-    vf, stream =  biotsavart( [pe], pv, Γ; core)
-    return vf[1], stream[1]
+    retvalues =  biotsavart( [pe], pv, Γ; args...)
+    return first.( (retvalues...) )
 
 end
 
@@ -63,7 +63,8 @@ end
 
 
 """
-function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12) where {T <: Vec2D}
+function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12, field=(:velocity, :stream)
+    ) where {T <: Vec2D}
     
     # ensure that number of vertices is the same as number of circulations
     @assert length(pv) == length(Γ)
@@ -81,19 +82,31 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
     # distances between evaluation Vec2D and vortices
     distances = norm.(normals)
     
+
+    retfields = ()
+
+    if :velocity in field
     # individual contribution to velocity field and stream function
     vfs = -(1/2/π) * (Γ' .* normals ) ./ (distances .^ 2 .+ core .^2 )
+    vf = vec(  sum(vfs, dims=2) )
+
+    retfields = (retfields..., vf)
+    end
+
+    if :stream in field
     streams = (-1/2/π) * Γ' .* log.(distances .+ core)
     
     # sum all contributions
-    vf = vec(  sum(vfs, dims=2) )
     stream = vec( sum(streams, dims=2) )
+
+    retfields = (retfields..., stream)
+    end
 
     # note to future self: 
     #   once we're trying to implement "max" or "min" 
     #   instead "sum" use findmax/findmin
     
-    return vf, stream
+    return retfields
     
 end
 
