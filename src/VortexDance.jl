@@ -15,7 +15,7 @@ This version of the function creates a return function that can be interpolated
 """
 function vortexdance( p_initial, Γ, tspan::Tuple{Real, Real} )
     
-    velocityfield(u, p, t) = biotsavart(u, u, p; field=:velocity)
+    velocityfield(u, p, t) = biotsavart(u, u, p; fieldtype=:velocity)
         
     diffeq = ODEProblem(
     velocityfield,
@@ -63,7 +63,7 @@ end
 
 
 """
-function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12, field=(:velocity, :stream)
+function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12, fieldtype::Union{Symbol,Vector{Symbol}} =[:velocity, :stream]
     ) where {T <: Vec2D}
     
     # ensure that number of vertices is the same as number of circulations
@@ -85,15 +85,18 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
 
     retfields = ()
 
-    if :velocity in field
-    # individual contribution to velocity field and stream function
+    fieldtype = vcat([fieldtype,]...) # ensure both scalar and 
+                                      # vector of symbols are accepted
+    @show fieldtype
+    if :velocity in fieldtype
+    # individual contribution to velocity fieldtype and stream function
     vfs = -(1/2/π) * (Γ' .* normals ) ./ (distances .^ 2 .+ core .^2 )
     vf = vec(  sum(vfs, dims=2) )
 
     retfields = (retfields..., vf)
     end
 
-    if :stream in field
+    if :stream in fieldtype
     streams = (-1/2/π) * Γ' .* log.(distances .+ core)
     
     # sum all contributions
