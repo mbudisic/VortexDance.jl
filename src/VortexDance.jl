@@ -75,7 +75,7 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
     @assert length(pv) == length(Γ)
 
     # ensure fieldtype is either velocity function or stream function
-    @assert fieldtype in [:velocity, :stream]
+    @assert fieldtype in [:velocity, :stream,:vorticity]
 
     # ensure that the core is a non-negative number
     @assert core >= 0
@@ -112,6 +112,15 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
 
     @assert size(stream) == size(pe)
     return stream
+elseif fieldtype==:vorticity
+    ωs = (1/2/π) * Γ' .* exp.( -0.5.*distances.^2/core.^2 )
+    
+    # sum all contributions
+    ω = similar(pe, typeof(ωs[1]))
+    ω .= sum(ωs, dims=2)
+
+    @assert size(ω) == size(pe)
+    return ω    
     
     end
 
