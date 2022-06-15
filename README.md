@@ -15,4 +15,4 @@ julia> Pluto.run(notebook="path/to/repo/examples/pluto_example_motion.jl")
 
 After playing with the number of vortices and simulation length, you should be able to obtain something like:
 
-![five_vortices](https://user-images.githubusercontent.com/748221/173427025-1abdca3e-d21f-429e-a1c6-846e74b724a7.png)
+![vortex-dance-demo](https://user-images.githubusercontent.com/748221/173864068-c8671098-a962-4602-a052-ab6520af4ed2.gif)
