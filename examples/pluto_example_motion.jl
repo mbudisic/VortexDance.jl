@@ -195,6 +195,8 @@ Slice number K = $(@bind K PlutoUI.Slider(1:100:size(sol_matrix,1), show_value=t
 Smoothing exponent = $(@bind smoothing_exp PlutoUI.Slider(-2:0.1:1, show_value=true,default=-1))
 
 Field = $(@bind fieldsel PlutoUI.Select([:vorticity, :stream],default=:stream))
+
+Plottype = $(@bind plotfun PlutoUI.Select([Makie.heatmap!, Makie.contourf!],default=heatmap!))
 """
 
 # ╔═╡ f7e82fdf-94d4-4944-82b2-ba5e1f36b644
@@ -237,7 +239,7 @@ md"""
 # ╔═╡ fbe45f3e-b7e3-40f8-b3c2-0e6fc4bca0da
 # invoking vortex_figure in a cell displays the output of this block
 velocity_figure = with_theme(theme_minimal()) do
-	fig = Figure(resolution=(500,400),
+	fig = Figure(resolution=(600,600),
 		font = "CMU Serif") # use LaTeX default fonts
 
 	ax = Axis(fig[1,1], 
@@ -254,21 +256,25 @@ velocity_figure = with_theme(theme_minimal()) do
 	)
 
 	# heatmap
-	valuerange = [-1,1].*maximum(abs.(fields[fieldsel].first))
-	h = Makie.contourf!(
+	valuerange = [-1,1].*round(maximum(abs.(fields[fieldsel].first)),digits=1)
+
+	# plotfun is a variable chosen by one of the selection boxes
+	# to be either Makie.heatmap! or Makie.contourf!
+	h = plotfun(
 		ax,xax, yax, fields[fieldsel].first,
 		colormap=:balance, 
 		levels=range(valuerange...,15),
 		colorrange = valuerange
 		)
+	hidespines!(ax)
 
-	Colorbar(fig[1,2],h, label=fields[fieldsel].second)
-	colgap!(fig.layout,Fixed(-20)) # reduce the gap between the colorbar
+	Colorbar(fig[1,2],h, label=fields[fieldsel].second, ticks=(range(valuerange...,5)))
+	#colgap!(fig.layout,Fixed(-10)) # reduce the gap between the colorbar
 
 	# arrows
-	Makie.arrows!(xax, yax,first.(u)/10, last.(u)/10; 
+	Makie.arrows!(xax, yax,first.(u)/3, last.(u)/3; 
 	normalize=false,
-	color=(:black, 0.3),arrowsize=5)
+	color=(:black, 0.3),arrowsize=8)
 
 
 	# iterate over vortex trajectories
