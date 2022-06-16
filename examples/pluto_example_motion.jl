@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.8
+# v0.19.9
 
 using Markdown
 using InteractiveUtils
@@ -32,7 +32,7 @@ end
 # ╔═╡ 92a981be-1161-4cc8-a404-be0bdeab2903
 begin
 	Pkg.add(
-		url="/Users/marko/Work/Projects/VortexDynamics/VortexDance.jl",
+		url="/home/mbudisic/Work/VortexDance.jl",
 		rev="develop"
 	) # the github url can be replaced by a local path to the repository
 	using VortexDance
@@ -256,7 +256,7 @@ velocity_figure = with_theme(theme_minimal()) do
 	)
 
 	# heatmap
-	valuerange = [-1,1].*round(maximum(abs.(fields[fieldsel].first)),digits=1)
+	valuerange = [-1,1] .* round(maximum(abs.(fields[fieldsel].first)),digits=1)
 
 	# plotfun is a variable chosen by one of the selection boxes
 	# to be either Makie.heatmap! or Makie.contourf!
@@ -268,8 +268,6 @@ velocity_figure = with_theme(theme_minimal()) do
 		)
 	hidespines!(ax)
 
-	Colorbar(fig[1,2],h, label=fields[fieldsel].second, ticks=(range(valuerange...,5)))
-	#colgap!(fig.layout,Fixed(-10)) # reduce the gap between the colorbar
 
 	# arrows
 	Makie.arrows!(xax, yax,first.(u)/3, last.(u)/3; 
