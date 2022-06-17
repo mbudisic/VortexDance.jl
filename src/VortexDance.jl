@@ -4,9 +4,12 @@ using LinearAlgebra:norm
 using DifferentialEquations
 using StaticArrays
 
+using RecursiveArrayTools
+
+using Distances
+
 export vortexdance
 export biotsavart
-export Vec2D
 export vortex_ODE
 
 const Vec2D = StaticArrays.SVector{2}
@@ -58,18 +61,12 @@ function vortexdance( p_initial, Γ, Trange::AbstractVector )
 end
 
 
-function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; args...) where {T <: Vec2D}
-    
-    first(biotsavart( [pe,], pv, Γ; args...))
-    
+function biotsavart(v::Vec2D,args...; kwargs...) 
+    biotsavart(VectorOfArray([v,]),args... ; kwargs...)[1]
 end
 
-"""
-
-
-"""
-function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12, fieldtype::Union{Symbol,Vector{Symbol}} =[:velocity, :stream]
-    ) where {T <: Vec2D}
+function biotsavart( pe::VectorOfArray, pv::VectorOfArray, Γ::Vector{<:Number}; core=1e-12, fieldtype::Union{Symbol,Vector{Symbol}} =[:velocity, :stream]
+    ) 
 
     # ensure that number of vertices is the same as number of circulations
     @assert length(pv) == length(Γ)
@@ -81,11 +78,9 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
     @assert core >= 0
     
     # compute normals to pairwise difference vectors between Vec2Ds in pe and pv
-    S = @SMatrix [0 1; -1 0]
-    normals = broadcast( 
-        x->S*x, 
-        reshape( view( pe, :, : ), : , 1 ) .- reshape( view( pv, :, :), 1, :  ) 
-        )
+    rot90 = @SMatrix [0 1; -1 0]
+    normals = [rot90 * Vec2D(u-v) for u in pe[:], v in pv[:]] 
+
     
     # distances between evaluation Vec2D and vortices
     distances = norm.(normals)
@@ -94,10 +89,9 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
 
     if fieldtype == :velocity
     # individual contribution to velocity fieldtype and stream function
-    vfs = -(1/2/π) * (Γ' .* normals ) ./ (distances .^ 2 .+ core .^2 )
+    vfs = -(1/2/π) * (normals .* Γ' ) ./ (distances .^ 2 .+ core .^2 )
 
-    vf = similar(pe, VortexDance.Vec2D)
-    vf .= sum(vfs, dims=2)
+    vf = VectorOfArray( sum( vfs, dims = 2)[:] )
 
     @assert size(vf) == size(pe)
 
