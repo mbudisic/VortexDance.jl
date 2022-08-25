@@ -2,7 +2,7 @@
 
 Simulate the motion of singular point vortices in a plane. 
 
-Vortices are modeled by positions and circulations $$p_n \in \mathbb{R}^2, \Gamma_n,\quad n=1,2,\dots,N.$$ Their motion is governed by the Biot--Savart law.
+Vortices are modeled by positions $p_n \in \mathbb{R}^2$ and circulations $\Gamma_n$, $n=1,2,\dots,N$. Their motion is governed by the Biot--Savart law.
 This package defines the corresponding velocity field and stream function, with accessory functions needed for visualizing the outputs.
 
 The motion of vortices is simulated using ![`DifferentialEquations.jl`](https://github.com/SciML/DifferentialEquations.jl) package.
