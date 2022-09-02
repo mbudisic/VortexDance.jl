@@ -14,8 +14,8 @@ RUN sudo apt-get update \
         m4 \
         cmake \
         pkg-config \
-        julia \
     && sudo rm -rf /var/lib/apt/lists/*
-
+RUN pip install jill
+RUN jill install
 # Give control back to Gitpod Layer
 USER root
