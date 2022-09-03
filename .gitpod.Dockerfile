@@ -5,7 +5,7 @@ USER gitpod
 # Install Julia
 RUN pip install jill
 RUN jill install --confirm
-RUN julia --project=. -e "using Pkg; Pkg.instantiate()"
+RUN julia --project=. -e "using Pkg; Pkg.instantiate(); Pkg.precompile()"
 
 
 # Give control back to Gitpod Layer
