@@ -65,9 +65,30 @@ function biotsavart( pe::Vec2D, pv::Vector{T}, Γ::Vector; args...) where {T <: 
 end
 
 """
+distances, normals = pdist_normal(p1::AbstractVector{T}, p2::AbstractVector{T}) where {T <: Vec2D}
 
+Compute lengths of all pairs of p1-p2 vectors,
+and the normals.
 
 """
+function pdist_normal(p1::AbstractVector{T}, p2::AbstractVector{T}) where {T <: Vec2D}
+
+    # compute normals to pairwise difference vectors between Vec2Ds in pe and pv
+    # rotation by 90deg
+    S = @SMatrix [0 1; -1 0]
+
+    # compute pairwise differences and rotate them by 90deg
+    out = p1 .- permutedims(p2) # pairwise differences
+    out = broadcast!( x-> S*x, out, out) # rotate all elements by 90 deg (perps)
+    
+    # distances between evaluation Vec2D and vortices
+    distances = norm.(out)
+
+    return distances, out
+
+
+end
+
 function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-12, fieldtype::Union{Symbol,Vector{Symbol}} =[:velocity, :stream]
     ) where {T <: Vec2D}
 
@@ -80,16 +101,7 @@ function biotsavart( pe::AbstractVector{T}, pv::Vector{T}, Γ::Vector; core=1e-1
     # ensure that the core is a non-negative number
     @assert core >= 0
     
-    # compute normals to pairwise difference vectors between Vec2Ds in pe and pv
-    S = @SMatrix [0 1; -1 0]
-    normals = broadcast( 
-        x->S*x, 
-        reshape( view( pe, :, : ), : , 1 ) .- reshape( view( pv, :, :), 1, :  ) 
-        )
-    
-    # distances between evaluation Vec2D and vortices
-    distances = norm.(normals)
-    
+    distances, normals = pdist_normal(pe, pv)
 
 
     if fieldtype == :velocity
